@@ -30,7 +30,7 @@ Use this phase to set initial data in the registers (e.g., loading **5** into Re
 5.  **Clean Up:** Set `LOAD_BUS_EXT` and `LD_A` **LOW (0)**.
 6.  **Verification:** The `Q_A_OUT` pin must now show **5**.
 
-#### Phase B: Execute $\text{INC\_A}$ (Opcode 01)
+#### Phase B: Execute INC_A (Opcode 01)
 
 This verifies the instruction execution cycle and control logic.
 
