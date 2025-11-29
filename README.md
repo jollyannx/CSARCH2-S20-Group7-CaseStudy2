@@ -8,45 +8,50 @@ This CPU supports four 8-bit instructions for incrementing and decrementing Regi
 
 | Instruction | Opcode (Hex) | Binary Opcode | Action |
 | :--- | :---: | :---: | :--- |
-| **INC\_A** | **01** | `0000 0001` | Register A ← A + 1 |
-| **DEC\_A** | **02** | `0000 0010` | Register A ← A - 1 |
-| **INC\_B** | **03** | `0000 0011` | Register B ← B + 1 |
-| **DEC\_B** | **04** | `0000 0100` | Register B ← B - 1 |
-
+| **INC\_A** | **00** | `0000 0000` | Register A ← A + 1 |
+| **DEC\_A** | **01** | `0000 0001` | Register A ← A - 1 |
+| **INC\_B** | **02** | `0000 0010` | Register B ← B + 1 |
+| **DEC\_B** | **03** | `0000 0011` | Register B ← B - 1 |
 
 ### II. Testing Procedure in Logisim
 
 Testing requires a **two-step cycle** for every instruction: 1) Load the Opcode into the Instruction Register (IR), and 2) Execute the instruction. The **Poke Tool** (the pointing hand icon) is used for all manual inputs.
 
-#### Phase A: Pre-Load Operands (Setup)
+# CPU Instruction Testing Guide
 
-Use this phase to set initial data in the registers (e.g., loading **5** into Register A).
+## Phase A: Load Value into Register A
 
-1.  **Set Input Value:** Click the **`external_data_in`** pin and set a test value (e.g., **5**).
-2.  **Enable External Load:** Click the manual pin **`LOAD_BUS_EXT`** to **HIGH (1)**.
-    * *(Action: This forces the Bus Mux to select the external data).*
-3.  **Enable Register Load:** Click the **`LD_A`** pin (or `LD_B`) to **HIGH (1)**.
-4.  **Execute Load:** **Poke the Clock once.**
-5.  **Clean Up:** Set `LOAD_BUS_EXT` and `LD_A` **LOW (0)**.
-6.  **Verification:** The `Q_A_OUT` pin must now show **5**.
+Use this phase to manually load a value (e.g., **5**) into **Register A**.
 
-#### Phase B: Execute INC_A (Opcode 01)
+1. **Set Manual Input Mode:** Set the `data_in` pin to **1** (manual input enabled).
+2. **Select Register A:** Set `select_a` to **1**.
+3. **Set Input Value:** Enter the desired value on `d_in`  
+   Example: `00000101` (decimal 5).
+4. **Execute Load:** Click the **Clock**.
+6. **Verification:** The **A register output** should now show **5**.
 
-This verifies the instruction execution cycle and control logic.
+## Phase B: Load Opcode (Example: `INC_A`)
 
-| Step | Action | Required Control Signals | Verification Check (Main Bus) |
-| :---: | :--- | :---: | :--- |
-| **1. Load Opcode** | Set `external_data_in` = **1**. | `LOAD_BUS_EXT` = **1**, `LD_IR` = **1** | (Bus shows 1) |
-| **2. Clock IR** | **Poke the Clock once.** | (IR now holds 1) | |
-| **3. Clean Up** | Set `LOAD_BUS_EXT` and `LD_IR` **LOW (0)**. | `LOAD_BUS_EXT` = **0** | (Bus Mux now selects ALU Result) |
-| **4. Execute** | **Poke the Clock once.** | `LD_A` = **1** (Asserted by Decoder) | (Bus shows $5+1=\mathbf{6}$) |
+This phase loads an instruction opcode into the instruction register (IR).
 
-**Final Result:** The **`Q_A_OUT`** pin must show **6**.
+1. **Prepare Opcode:** Set `data_in` = **0**.
+2. **Input Opcode:** Enter `00000000` (INC_A) on `d_in`.  
+3. **Clock IR:** Click the **Clock**.  
 
-#### Phase C: Repeat for DEC\_B (Example)
+## Phase C: Load Value into Register B
 
-1.  **Setup Register B:** Use **Phase A** to load Register B with a test value (e.g., **10**). Clean up.
-2.  **Load Opcode:** Use **Steps 1-3 of Phase B** to load Opcode **04** (`DEC_B`) into the IR. Clean up.
-3.  **Execute:** Set `LOAD_BUS_EXT` = **0**. **Poke the Clock once.**
-    * *Verification Check:* The Bus should show $10-1=\mathbf{9}$.
-4.  **Final Result:** The **`Q_B_OUT`** pin must show **9**.
+Use this phase to manually load a value (e.g., **0**) into **Register B**.
+
+1. **Set Manual Input Mode:** Set the `data_in` pin to **1**.
+2. **Select Register B:** Set `select_b` to **1** and `select_a` to **0**.
+3. **Set Input Value:** Enter the value on `d_in`  
+   Example: `00000000` (decimal 0).
+4. **Execute Load:** Click the **Clock**.
+6. **Verification:** The **B register output** should now show **0**.
+
+## Phase D: Load Opcode (Example: `DEC_B`)
+
+1. **Prepare Opcode:** Set `data_in` = **0**.
+2. **Input Opcode:** Enter `00000011` (DEC_B) on `d_in`.
+3. **Clock IR:** Click the **Clock**.
+
